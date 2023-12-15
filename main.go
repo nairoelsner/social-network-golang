@@ -145,7 +145,7 @@ func main() {
 		}
 	})
 
-	err := r.Run("26.143.5.212:8080")
+	err := r.Run(":8080")
 	if err != nil {
 		return
 	}
