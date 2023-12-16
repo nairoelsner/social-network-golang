@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -9,9 +12,18 @@ import (
 	"github.com/nairoelsner/socialNetworkGo/src/socialNetwork/network"
 )
 
+const envVarName = "SOCIAL_NETWORK_URL"
+
 func main() {
 	network := network.NewNetwork()
 	initialization.Execute(network)
+
+	go func() {
+		for {
+			healthCheck()
+			time.Sleep(14 * time.Minute)
+		}
+	}()
 
 	r := gin.Default()
 	r.Use(cors.Default())
@@ -180,4 +192,16 @@ func main() {
 	if err != nil {
 		return
 	}
+}
+
+func healthCheck() {
+	baseURL := os.Getenv(envVarName)
+
+	response, err := http.Get(baseURL)
+	if err != nil {
+		fmt.Println("Erro ao chamar a rota '/'", err)
+		return
+	}
+	defer response.Body.Close()
+	fmt.Println("Status da resposta:", response.Status)
 }
