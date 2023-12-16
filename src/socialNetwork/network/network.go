@@ -76,7 +76,7 @@ func (n *Network) AddUser(username string, password string, name string) error {
 	}
 
 	user := user.NewUser(username, password, name)
-	err := n.AddVertex(username, user, []string{"follows", "followers"})
+	err := n.AddVertex(username, user, []string{"following", "followers"})
 	if err != nil {
 		return errors.New("Couldn't add user!")
 	}
@@ -123,7 +123,7 @@ func (n *Network) AddFollower(followerUsername string, followingUsername string)
 		return errors.New("User can't follow himself!")
 	}
 
-	err := n.Graph.AddBidirectionalEdge([2]interface{}{followerUsername, followingUsername}, "follows", "followers", 0, 0)
+	err := n.Graph.AddBidirectionalEdge([2]interface{}{followerUsername, followingUsername}, "following", "followers", 0, 0)
 	if err != nil {
 		return errors.New("Couldn't follow user!")
 	}
@@ -180,5 +180,65 @@ func (n *Network) Search(username string, searchTerm string) ([]string, error) {
 	}
 
 	return foundUsers, nil
+}
 
+func (n *Network) GetUserCenteredGraph(username string) (map[string]interface{}, error) {
+	data, err := n.Graph.BreadthFirstSearch(username, 3)
+	if err != nil {
+		return nil, errors.New("User doesn't exist!")
+	}
+
+	connectionsInterface := data["connections"].(map[interface{}][]interface{})
+	distancesInterface := data["distances"].(map[interface{}]int)
+
+	connections := make(map[string][]string)
+	for key, value := range connectionsInterface {
+		strKey := key.(string)
+		strValue := make([]string, len(value))
+		for i, v := range value {
+			strValue[i] = v.(string)
+		}
+		connections[strKey] = strValue
+	}
+
+	distances := make(map[string]int)
+	for key, value := range distancesInterface {
+		strKey := key.(string)
+		distances[strKey] = value
+	}
+
+	nodes := make([]string, 0, len(distances))
+	for key := range distances {
+		nodes = append(nodes, key)
+	}
+
+	edges := []map[string]string{}
+	for user, connectedUsers := range connections {
+		for _, connectedUser := range connectedUsers {
+			edges = append(edges, map[string]string{"source": user, "target": connectedUser})
+
+		}
+	}
+	userCenteredGraph := map[string]interface{}{"nodes": nodes, "distances": distances, "edges": edges}
+
+	return userCenteredGraph, nil
+}
+
+func (n *Network) GetGraph() (map[string]interface{}, error) {
+	nodes := n.GetAllUsernames()
+	connections := []map[string]string{}
+	followersQty := map[string]int{}
+
+	for _, username := range nodes {
+		userVertex, _ := n.Graph.GetVertex(username)
+		userFollowing := userVertex.GetConnection("following")
+		followersQty[username] = len(userVertex.GetConnection("followers"))
+
+		for followedByUser := range userFollowing {
+			connections = append(connections, map[string]string{"source": username, "target": followedByUser.(string)})
+		}
+	}
+	networkGraph := map[string]interface{}{"nodes": nodes, "connections": connections, "followersQty": followersQty}
+
+	return networkGraph, nil
 }

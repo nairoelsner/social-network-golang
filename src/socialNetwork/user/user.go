@@ -1,6 +1,9 @@
 package user
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type User struct {
 	username       string
@@ -55,7 +58,6 @@ func (u *User) UpdateInfo(newInfo map[string]string) error {
 	}
 
 	return nil
-
 }
 
 func (u *User) GetAuthInfo() map[string]string {
@@ -68,5 +70,6 @@ func (u *User) GetSearchableInfo() string {
 }
 
 func (u *User) CreatePost(username string, text string) {
-	u.mural = append([]map[string]string{{"username": username, "text": text}}, u.mural...)
+	dateTime := time.Now().Format("01-02-2006 15:04:05")
+	u.mural = append([]map[string]string{{"username": username, "text": text, "createdAt": dateTime}}, u.mural...)
 }

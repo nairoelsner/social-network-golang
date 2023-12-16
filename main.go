@@ -15,6 +15,12 @@ func main() {
 	network.AddUser("n_elsner", "senha123", "Nairo Elsner")
 	network.AddUser("seven_renato", "senha123", "Paulo Renato")
 
+	network.AddUser("bill_gates", "senha123", "Bill Gates")
+	network.AddUser("steve_jobs", "senha123", "Steve Jobs")
+
+	network.AddFollower("clarossa", "bill_gates")
+	network.AddFollower("bill_gates", "steve_jobs")
+
 	network.AddFollower("clarossa", "endriys")
 	network.AddFollower("clarossa", "n_elsner")
 	network.AddFollower("clarossa", "seven_renato")
@@ -162,6 +168,33 @@ func main() {
 		} else {
 			c.Status(200)
 		}
+	})
+
+	r.GET("/user-centered-graph/:username", func(c *gin.Context) {
+		username := c.Param("username")
+		_, userExists := network.GetUser(username)
+		if !userExists {
+			c.JSON(400, gin.H{"error": "User doesn't exist!"})
+			return
+		}
+
+		userCeneteredGraph, err := network.GetUserCenteredGraph(username)
+		if err != nil {
+			c.JSON(400, gin.H{"error": "Couldn't get user centered graph!"})
+		} else {
+			c.JSON(200, userCeneteredGraph)
+		}
+
+	})
+
+	r.GET("/social-network-graph", func(c *gin.Context) {
+		socialNetworkGraph, err := network.GetGraph()
+		if err != nil {
+			c.JSON(400, gin.H{"error": "Couldn't get social network graph!"})
+		} else {
+			c.JSON(200, socialNetworkGraph)
+		}
+
 	})
 
 	err := r.Run(":8080")
