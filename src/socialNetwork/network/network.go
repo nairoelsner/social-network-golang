@@ -3,6 +3,7 @@ package network
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/nairoelsner/socialNetworkGo/src/dataStructures/graph"
 	"github.com/nairoelsner/socialNetworkGo/src/socialNetwork/user"
@@ -139,4 +140,45 @@ func (n *Network) CreatePost(username1 string, username2 string, text string) er
 	user := userVertex.GetValue().(*user.User)
 	user.CreatePost(username1, text)
 	return nil
+}
+
+func (n *Network) Search(username string, searchTerm string) ([]string, error) {
+	_, userExists := n.Graph.GetVertex(username)
+	if !userExists {
+		return nil, errors.New("User doesn't exist!")
+	}
+
+	visited := map[string]bool{}
+	for _, user := range n.GetAllUsernames() {
+		visited[user] = false
+	}
+	visited[username] = true
+
+	foundUsers := []string{}
+	queue := []string{username}
+	for len(queue) > 0 {
+		currentUsername := queue[0]
+		queue = queue[1:]
+
+		userVertex, _ := n.Graph.GetVertex(currentUsername)
+		neighborhood := userVertex.GetConnectedKeys()
+		for _, neighbor := range neighborhood {
+			neighborStr, _ := neighbor.(string)
+			if !visited[neighborStr] {
+				visited[neighborStr] = true
+				queue = append(queue, neighborStr)
+
+				neighborVertex, _ := n.Graph.GetVertex(neighborStr)
+				neighborUser, _ := neighborVertex.GetValue().(*user.User)
+
+				neighborSearchableInfo := neighborUser.GetSearchableInfo()
+				if strings.Contains(neighborSearchableInfo, searchTerm) {
+					foundUsers = append(foundUsers, neighborStr)
+				}
+			}
+		}
+	}
+
+	return foundUsers, nil
+
 }

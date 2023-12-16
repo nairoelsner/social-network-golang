@@ -10,11 +10,23 @@ import (
 
 func main() {
 	network := network.NewNetwork()
-	network.AddUser("n_elsner", "senha123", "Nairo Elsner")
 	network.AddUser("clarossa", "senha123", "Clarisse Estima")
+	network.AddUser("endriys", "senha123", "Gabriel Endres")
+	network.AddUser("n_elsner", "senha123", "Nairo Elsner")
+	network.AddUser("seven_renato", "senha123", "Paulo Renato")
 
-	network.AddFollower("n_elsner", "clarossa")
+	network.AddFollower("clarossa", "endriys")
 	network.AddFollower("clarossa", "n_elsner")
+	network.AddFollower("clarossa", "seven_renato")
+	network.AddFollower("endriys", "clarossa")
+	network.AddFollower("endriys", "n_elsner")
+	network.AddFollower("endriys", "seven_renato")
+	network.AddFollower("n_elsner", "clarossa")
+	network.AddFollower("n_elsner", "endriys")
+	network.AddFollower("n_elsner", "seven_renato")
+	network.AddFollower("seven_renato", "clarossa")
+	network.AddFollower("seven_renato", "endriys")
+	network.AddFollower("seven_renato", "n_elsner")
 
 	r := gin.Default()
 
@@ -22,7 +34,7 @@ func main() {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		c.Writer.Header().Set("Access-Control-Max-Age", "86400") // 1 day
+		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
 		if c.Request.Method == http.MethodOptions {
 			c.AbortWithStatus(200)
 			return
@@ -108,6 +120,24 @@ func main() {
 			c.JSON(400, gin.H{"error": "Couldn't update user!"})
 		} else {
 			c.Status(200)
+		}
+	})
+
+	r.POST("/search", func(c *gin.Context) {
+		var data map[string]string
+		if err := c.BindJSON(&data); err != nil {
+			c.JSON(400, gin.H{"error": "Formato JSON inválido"})
+			return
+		}
+
+		username := data["username"]
+		searchTerm := data["searchTerm"]
+
+		results, err := network.Search(username, searchTerm)
+		if err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(200, gin.H{"results": results})
 		}
 	})
 

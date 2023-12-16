@@ -58,3 +58,17 @@ func (v *Vertex) AddConnection(adjKey interface{}, connectionType string, weight
 func (v *Vertex) AddConnectionType(connectionType string) {
 	v.connections[connectionType] = make(map[interface{}]int)
 }
+
+func (v *Vertex) GetConnectedKeys() []interface{} {
+	connectedKeys := make(map[interface{}]struct{})
+	for _, connections := range v.connections {
+		for key := range connections {
+			connectedKeys[key] = struct{}{}
+		}
+	}
+	keysList := make([]interface{}, 0, len(connectedKeys))
+	for key := range connectedKeys {
+		keysList = append(keysList, key)
+	}
+	return keysList
+}

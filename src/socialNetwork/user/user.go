@@ -25,7 +25,7 @@ func NewUser(username string, password string, name string) *User {
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("username: %s bio: %s", u.username, u.bio)
+	return fmt.Sprintf(u.username, u.name, u.bio)
 }
 
 func (u *User) GetInfo() map[string]interface{} {
@@ -63,14 +63,8 @@ func (u *User) GetAuthInfo() map[string]string {
 	return authInfo
 }
 
-func (u *User) SetName(newName string) bool {
-	u.username = newName
-	return true
-}
-
-func (u *User) SetBio(newBio string) bool {
-	u.bio = newBio
-	return true
+func (u *User) GetSearchableInfo() string {
+	return u.username + " " + u.name + " " + u.bio
 }
 
 func (u *User) CreatePost(username string, text string) {
