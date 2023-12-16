@@ -70,6 +70,7 @@ func (u *User) GetSearchableInfo() string {
 }
 
 func (u *User) CreatePost(username string, text string) {
+	time.Local, _ = time.LoadLocation("America/Sao_Paulo")
 	dateTime := time.Now().Format("01-02-2006 15:04:05")
 	u.mural = append([]map[string]string{{"username": username, "text": text, "createdAt": dateTime}}, u.mural...)
 }
