@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -66,7 +67,7 @@ func (u *User) GetAuthInfo() map[string]string {
 }
 
 func (u *User) GetSearchableInfo() string {
-	return u.username + " " + u.name + " " + u.bio
+	return strings.ToLower(u.username + " " + u.name + " " + u.bio)
 }
 
 func (u *User) CreatePost(username string, text string) {

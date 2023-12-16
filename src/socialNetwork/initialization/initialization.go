@@ -8,6 +8,15 @@ func Execute(network *network.Network) {
 	network.AddUser("n_elsner", "senha123", "Nairo Elsner")
 	network.AddUser("seven_renato", "senha123", "Paulo Renato")
 
+	network.UpdateUser("clarossa", map[string]string{"bio": ""})
+
+	network.UpdateUser("endriys", map[string]string{"bio": ""})
+
+	network.UpdateUser("n_elsner", map[string]string{"bio": ">hello world"})
+	network.CreatePost("n_elsner", "n_elsner", "Bem-vindos ao Orbee! :)")
+
+	network.UpdateUser("seven_renato", map[string]string{"bio": "Eu sou Paulo Renato e tenho 19 anos!"})
+
 	network.AddFollower("clarossa", "endriys")
 	network.AddFollower("clarossa", "n_elsner")
 	network.AddFollower("clarossa", "seven_renato")

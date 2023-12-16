@@ -172,7 +172,7 @@ func (n *Network) Search(username string, searchTerm string) ([]string, error) {
 				neighborUser := neighborVertex.GetValue().(*user.User)
 
 				neighborSearchableInfo := neighborUser.GetSearchableInfo()
-				if strings.Contains(neighborSearchableInfo, searchTerm) {
+				if strings.Contains(neighborSearchableInfo, strings.ToLower(searchTerm)) {
 					foundUsers = append(foundUsers, neighborStr)
 				}
 			}
@@ -185,7 +185,7 @@ func (n *Network) Search(username string, searchTerm string) ([]string, error) {
 			user := userVertex.GetValue().(*user.User)
 
 			userSearchableInfo := user.GetSearchableInfo()
-			if strings.Contains(userSearchableInfo, searchTerm) {
+			if strings.Contains(userSearchableInfo, strings.ToLower(searchTerm)) {
 				foundUsers = append(foundUsers, username)
 			}
 
