@@ -196,7 +196,7 @@ func (n *Network) Search(username string, searchTerm string) ([]string, error) {
 }
 
 func (n *Network) GetUserCenteredGraph(username string) (map[string]interface{}, error) {
-	data, err := n.Graph.BreadthFirstSearch(username, 3, "following")
+	data, err := n.Graph.BreadthFirstSearch(username, 3)
 	if err != nil {
 		return nil, errors.New("User doesn't exist!")
 	}

@@ -94,7 +94,7 @@ func (g *Graph) AddBidirectionalEdge(verticesKeys [2]interface{}, connType1 stri
 	return nil
 }
 
-func (g *Graph) BreadthFirstSearch(start interface{}, maxDepth int, connectionType string) (map[string]interface{}, error) {
+func (g *Graph) BreadthFirstSearch(start interface{}, maxDepth int) (map[string]interface{}, error) {
 	_, vertexExists := g.GetVertex(start)
 	if !vertexExists {
 		return nil, errors.New("Vertex doesn't exist!")
@@ -122,10 +122,9 @@ func (g *Graph) BreadthFirstSearch(start interface{}, maxDepth int, connectionTy
 		}
 
 		vertex, _ := g.GetVertex(currentKey)
-		neighborhood := vertex.GetConnection(connectionType)
-		connections[currentKey] = []interface{}{}
-		for neighborKey := range neighborhood {
-			connections[currentKey] = append(connections[currentKey], neighborKey)
+		connections[currentKey] = vertex.GetConnectedKeys()
+		neighborhood := vertex.GetConnectedKeys()
+		for _, neighborKey := range neighborhood {
 			if !visited[neighborKey] {
 				visited[neighborKey] = true
 				distance[neighborKey] = distance[currentKey] + 1
