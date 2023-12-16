@@ -169,13 +169,26 @@ func (n *Network) Search(username string, searchTerm string) ([]string, error) {
 				queue = append(queue, neighborStr)
 
 				neighborVertex, _ := n.Graph.GetVertex(neighborStr)
-				neighborUser, _ := neighborVertex.GetValue().(*user.User)
+				neighborUser := neighborVertex.GetValue().(*user.User)
 
 				neighborSearchableInfo := neighborUser.GetSearchableInfo()
 				if strings.Contains(neighborSearchableInfo, searchTerm) {
 					foundUsers = append(foundUsers, neighborStr)
 				}
 			}
+		}
+	}
+
+	for username, haveBeenVisited := range visited {
+		if !haveBeenVisited {
+			userVertex, _ := n.Graph.GetVertex(username)
+			user := userVertex.GetValue().(*user.User)
+
+			userSearchableInfo := user.GetSearchableInfo()
+			if strings.Contains(userSearchableInfo, searchTerm) {
+				foundUsers = append(foundUsers, username)
+			}
+
 		}
 	}
 

@@ -124,8 +124,6 @@ func (g *Graph) BreadthFirstSearch(start interface{}, maxDepth int, connectionTy
 		vertex, _ := g.GetVertex(currentKey)
 		neighborhood := vertex.GetConnection(connectionType)
 		connections[currentKey] = []interface{}{}
-		//connections[currentKey] = vertex.GetConnectedKeys()
-		//neighborhood := vertexConnections
 		for neighborKey := range neighborhood {
 			connections[currentKey] = append(connections[currentKey], neighborKey)
 			if !visited[neighborKey] {
