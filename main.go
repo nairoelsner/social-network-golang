@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"net/http"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/nairoelsner/socialNetworkGo/src/socialNetwork/network"
 )
@@ -30,17 +31,17 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
-		if c.Request.Method == http.MethodOptions {
-			c.AbortWithStatus(200)
-			return
-		}
-		c.Next()
-	})
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://foo.com"},
+		AllowMethods:     []string{"PUT", "PATCH"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"Status": "Live"})
