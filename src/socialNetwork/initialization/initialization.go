@@ -1,9 +1,13 @@
 package initialization
 
-import "github.com/nairoelsner/socialNetworkGo/src/socialNetwork/network"
+import (
+	"os"
+
+	"github.com/nairoelsner/socialNetworkGo/src/socialNetwork/network"
+)
 
 func Execute(network *network.Network) {
-	defaultPassword := "DEFAULT_PASSWORD"
+	defaultPassword := os.Getenv("DEFAULT_PASSWORD")
 
 	network.AddUser("clarossa", defaultPassword, "Clarisse Estima")
 	network.AddUser("endriys", defaultPassword, "Gabriel Endres")
