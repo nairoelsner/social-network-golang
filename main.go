@@ -12,8 +12,6 @@ import (
 	"github.com/nairoelsner/socialNetworkGo/src/socialNetwork/network"
 )
 
-const envVarName = "SOCIAL_NETWORK_URL"
-
 func main() {
 	network := network.NewNetwork()
 	initialization.Execute(network)
@@ -195,7 +193,7 @@ func main() {
 }
 
 func healthCheck() {
-	baseURL := os.Getenv(envVarName)
+	baseURL := os.Getenv("SOCIAL_NETWORK_URL")
 
 	response, err := http.Get(baseURL)
 	if err != nil {

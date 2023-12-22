@@ -3,10 +3,12 @@ package initialization
 import "github.com/nairoelsner/socialNetworkGo/src/socialNetwork/network"
 
 func Execute(network *network.Network) {
-	network.AddUser("clarossa", "senha123", "Clarisse Estima")
-	network.AddUser("endriys", "senha123", "Gabriel Endres")
-	network.AddUser("n_elsner", "senha123", "Nairo Elsner")
-	network.AddUser("seven_renato", "senha123", "Paulo Renato")
+	defaultPassword := "DEFAULT_PASSWORD"
+
+	network.AddUser("clarossa", defaultPassword, "Clarisse Estima")
+	network.AddUser("endriys", defaultPassword, "Gabriel Endres")
+	network.AddUser("n_elsner", defaultPassword, "Nairo Elsner")
+	network.AddUser("seven_renato", defaultPassword, "Paulo Renato")
 
 	network.UpdateUser("clarossa", map[string]string{"bio": ""})
 
